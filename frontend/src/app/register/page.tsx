@@ -64,10 +64,17 @@ export default function RegisterPage() {
 
         try {
             const response = await api.auth.checkUserId(userId);
+            const translatedMessage =
+                response.message === "This ID is already in use"
+                    ? "이미 사용 중인 아이디입니다"
+                    : response.message === "This ID is available"
+                      ? "사용 가능한 아이디입니다"
+                      : response.message;
+
             setUserIdCheck({
                 isChecking: false,
                 isAvailable: response.available,
-                message: response.message,
+                message: translatedMessage,
             });
         } catch (error) {
             console.error("Failed to check user ID availability:", error);
