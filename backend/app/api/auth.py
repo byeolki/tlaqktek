@@ -19,9 +19,9 @@ def check_user_id_availability(user_id: str, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.user_id == normalized_user_id).first()
 
     if existing_user:
-        return {"available": False, "message": "이미 사용 중인 아이디입니다"}
+        return {"available": False, "message": "This ID is already in use"}
     else:
-        return {"available": True, "message": "사용 가능한 아이디입니다"}
+        return {"available": True, "message": "This ID is available"}
 
 @router.post("/register", response_model=UserResponse)
 def register(user_data: UserRegister, db: Session = Depends(get_db)):
