@@ -12,7 +12,7 @@ RUN npm ci
 COPY . .
 
 # Set environment variable for API URL
-ENV NEXT_PUBLIC_API_URL=http://localhost:8000
+# ENV NEXT_PUBLIC_API_URL=http://localhost:8000
 
 # Build the application
 RUN npm run build
