@@ -109,8 +109,9 @@ npm install
 3. Create environment file
 
 ```bash
-# Create .env.local file
-NEXT_PUBLIC_API_URL=http://localhost:8000
+# Create frontend/.env.local file
+cd frontend
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
 ```
 
 4. Start the development server
@@ -121,7 +122,7 @@ npm run dev
 
 ## Environment Variables
 
-### Backend (.env)
+### Backend (backend/.env)
 
 ```
 DATABASE_URL=postgresql://postgres:password@localhost:5432/fastapi_db
@@ -131,7 +132,7 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
-### Frontend (.env.local)
+### Frontend (frontend/.env.local)
 
 ```
 NEXT_PUBLIC_API_URL=http://localhost:8000
