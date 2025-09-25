@@ -35,18 +35,54 @@ apiClient.interceptors.request.use((config) => {
     return config;
 });
 
+// Error message translation map
+const errorTranslations: { [key: string]: string } = {
+    "Invalid user ID or password": "아이디 또는 비밀번호가 틀렸습니다",
+    "This user ID is already in use": "이미 사용 중인 아이디입니다",
+    "Your current password is incorrect": "현재 비밀번호가 틀렸습니다",
+    "Token has been invalidated": "토큰이 만료되었습니다",
+    "Invalid token": "유효하지 않은 토큰입니다",
+    "An error occurred": "오류가 발생했습니다",
+};
+
 // Response interceptor to handle errors
 apiClient.interceptors.response.use(
     (response) => response,
     (error: AxiosError) => {
-        if (error.response?.status === 401) {
-            // Token expired or invalid
+        // Extract error message from response
+        let errorMessage = "An error occurred";
+
+        if (error.response?.data) {
+            const data = error.response.data as any;
+            if (data.detail) {
+                errorMessage = data.detail;
+            } else if (data.message) {
+                errorMessage = data.message;
+            } else if (typeof data === "string") {
+                errorMessage = data;
+            }
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+
+        // Translate error message to Korean
+        const translatedMessage = errorTranslations[errorMessage] || errorMessage;
+
+        // Handle 401 errors (only redirect for token expiration, not login failures)
+        if (error.response?.status === 401 && !error.config?.url?.includes("/auth/login")) {
+            // Token expired or invalid (but not a login attempt)
             if (typeof window !== "undefined") {
                 localStorage.removeItem("access_token");
                 window.location.href = "/login";
             }
         }
-        return Promise.reject(error);
+
+        // Create new error with translated message
+        const enhancedError = new Error(translatedMessage);
+        (enhancedError as any).status = error.response?.status;
+        (enhancedError as any).response = error.response;
+
+        return Promise.reject(enhancedError);
     },
 );
 
